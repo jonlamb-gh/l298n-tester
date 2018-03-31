@@ -34,7 +34,7 @@ static void delay_ms(
     uint8_t done;
     uint32_t time;
 
-    // TODO - make this better
+    // TODO - make this better or use util _delay_ms()
     disable_interrupt();
     time = global_counter_ms;
     enable_interrupt();
