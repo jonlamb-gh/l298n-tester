@@ -4,7 +4,6 @@
  *
  */
 
-//#include <stdlib.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
@@ -23,6 +22,8 @@
 
 int main(void)
 {
+    disable_interrupt();
+
     cpu_prescale(CPU_16MHZ);
 
     led_init();
@@ -30,9 +31,14 @@ int main(void)
 
     time_init();
 
+    enable_interrupt();
+
     while(1)
     {
-        time_delay_ms(1000);
+        //time_delay_ms(50);
+
+        static const uint32_t us = 10UL * US_PER_MS;
+        time_delay_us(&us);
 
         led_toggle();
     }
