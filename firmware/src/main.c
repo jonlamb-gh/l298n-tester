@@ -35,10 +35,7 @@ int main(void)
 
     while(1)
     {
-        //time_delay_ms(50);
-
-        static const uint32_t us = 10UL * US_PER_MS;
-        time_delay_us(&us);
+        time_delay_ms(1000);
 
         led_toggle();
     }

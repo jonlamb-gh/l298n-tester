@@ -16,9 +16,6 @@ void time_init(void);
 void time_delay_ms(
         const uint16_t ms);
 
-void time_delay_us(
-        const uint32_t * const us);
-
-uint32_t time_get_us(void);
+uint32_t time_get_ms(void);
 
 #endif  /* TIME_H */
