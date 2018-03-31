@@ -11,6 +11,7 @@
 
 #include "board_def.h"
 #include "time.h"
+#include "pwm.h"
 
 // pwm frequency
 // https://www.pjrc.com/teensy/td_pulse.html
@@ -30,6 +31,8 @@ int main(void)
     led_off();
 
     time_init();
+
+    pwm_init();
 
     enable_interrupt();
 

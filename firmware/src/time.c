@@ -2,6 +2,7 @@
  * @file time.c
  * @brief TODO.
  *
+ * Use this where needed: https://www.nongnu.org/avr-libc/user-manual/group__util__delay.html
  */
 
 #include <stdint.h>
