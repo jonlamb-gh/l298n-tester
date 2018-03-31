@@ -1,11 +1,11 @@
 /**
- * @file board.h
+ * @file board_def.h
  * @brief TODO.
  *
  */
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef BOARD_DEF_H
+#define BOARD_DEF_H
 
 #include <stdint.h>
 
@@ -21,16 +21,17 @@
 #define MAX(a, b) ( (a)>(b) ? (a) : (b) )
 #define MIN(a, b) ( (a)<(b) ? (a) : (b) )
 
+#define BIT(x) (0x01 << (x))
+
 #define bit_get(p,m) ((p) & (m))
 #define bit_set(p,m) ((p) |= (m))
 #define bit_clear(p,m) ((p) &= ~(m))
 #define bit_flip(p,m) ((p) ^= (m))
 #define bit_write(c,p,m) (c ? bit_set(p,m) : bit_clear(p,m))
-#define BIT(x) (0x01 << (x))
 
 #define CPU_16MHZ (0x00)
 
-#define CPU_PRESCALE(n) {CLKPR = 0x80; CLKPR = (n);}
+#define cpu_prescale(n) {CLKPR = 0x80; CLKPR = (n);}
 
 #define hard_reset() {WDTCR |= 1<<WDE;  while(1);}
 
