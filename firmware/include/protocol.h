@@ -19,6 +19,7 @@ typedef struct __attribute__((packed))
     uint32_t end_time;
     uint16_t error_cnt;
     // TODO
+    uint8_t reserved[64-14];
     uint16_t checksum;
 } proto_msg_s;
 

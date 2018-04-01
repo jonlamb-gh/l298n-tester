@@ -46,6 +46,14 @@ static const uint16_t CRC16_TABLE[256] =
     0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
 };
 
+static void assert_message_size(void) __attribute__((unused));
+#define BUILD_ASSERT(cond) do { (void) sizeof(char [1 - 2*!(cond)]); } while(0)
+static void assert_message_size(void)
+{
+    BUILD_ASSERT(PROTO_MSG_SIZE == sizeof(proto_msg_s));
+}
+#undef BUILD_ASSERT
+
 /** Calculate CCITT 16-bit cyclical redundancy check (CRC16).
  *
  * This implementation uses parameters used by XMODEM i.e. polynomial is:
