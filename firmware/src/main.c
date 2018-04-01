@@ -17,6 +17,8 @@
 
 int main(void)
 {
+    input_s input;
+
     disable_interrupt();
 
     cpu_prescale(CPU_16MHZ);
@@ -37,6 +39,8 @@ int main(void)
         time_delay_ms(1000);
 
         led_toggle();
+
+        input_update(&input);
     }
 
     return 0;

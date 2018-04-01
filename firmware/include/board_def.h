@@ -52,6 +52,25 @@
 #define ADC_DDR DDRF
 #define ADC_PORT PORTF
 
+#define BUTTON_PIN PIND
+#define BUTTON_DDR DDRD
+#define BUTTON_PORT PORTD
+#define BUTTON_BIT_BT0 (4)
+#define BUTTON_BIT_BT1 (5)
+#define BUTTON_BIT_BT2 (6)
+
+#define SWITCH_PIN PIND
+#define SWITCH_DDR DDRD
+#define SWITCH_PORT PORTD
+#define SWITCH_BIT_SW0 (7)
+
+#define POT_PIN PINF
+#define POT_DDR DDRF
+#define POT_PORT PORTF
+#define POT_BIT_PT0 (0)
+#define POT_BIT_PT1 (1)
+
+// TODO - move to led.h
 #define led_init() bit_set(LED_DDR, BIT(LED_BIT))
 #define led_on() bit_set(LED_PORT, BIT(LED_BIT))
 #define led_off() bit_clear(LED_PORT, BIT(LED_BIT))
