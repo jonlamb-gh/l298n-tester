@@ -43,6 +43,11 @@
 #define LED_PORT PORTD
 #define LED_BIT (6)
 
+#define PWM_PIN PINC
+#define PWM_DDR DDRC
+#define PWM_PORT PORTC
+#define PWM_BIT (4)
+
 #define led_init() bit_set(LED_DDR, BIT(LED_BIT))
 #define led_on() bit_set(LED_PORT, BIT(LED_BIT))
 #define led_off() bit_clear(LED_PORT, BIT(LED_BIT))

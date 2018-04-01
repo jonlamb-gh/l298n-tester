@@ -13,14 +13,6 @@
 #include "time.h"
 #include "pwm.h"
 
-// pwm frequency
-// https://www.pjrc.com/teensy/td_pulse.html
-// defaults for teensy++ 2.0
-// 0 - 976.56 Hz
-// 1 - 3921.57 Hz
-// 2 - 3921.57 Hz
-// 3 - 3921.57 Hz
-
 int main(void)
 {
     disable_interrupt();
