@@ -32,6 +32,7 @@ SRC = src/usb_rawhid.c \
 	  src/pwm.c \
 	  src/adc.c \
 	  src/input.c \
+	  src/driver.c \
 	  src/protocol.c \
 	  src/transport.c \
 	  src/main.c

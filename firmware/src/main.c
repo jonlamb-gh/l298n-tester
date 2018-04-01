@@ -4,6 +4,7 @@
  *
  */
 
+#include <string.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
@@ -14,6 +15,7 @@
 #include "pwm.h"
 #include "adc.h"
 #include "input.h"
+#include "driver.h"
 #include "protocol.h"
 #include "transport.h"
 
@@ -32,10 +34,20 @@ static void wait_for_transport(void)
     led_off();
 }
 
+static void init_msg(
+        const uint16_t error_cnt,
+        proto_msg_s * const msg)
+{
+    (void) memset(msg, 0, sizeof(*msg));
+    msg->preamble = PROTO_MSG_PREAMBLE;
+    msg->error_cnt = error_cnt;
+}
+
 int main(void)
 {
-    input_s input;
+    proto_msg_s msg;
 
+    wdt_disable();
     disable_interrupt();
 
     cpu_prescale(CPU_16MHZ);
@@ -45,7 +57,7 @@ int main(void)
 
     time_init();
 
-    pwm_init();
+    driver_init();
 
     input_init();
 
@@ -55,13 +67,29 @@ int main(void)
 
     wait_for_transport();
 
+    init_msg(0, &msg);
+
     while(1)
     {
         time_delay_ms(1000);
 
         led_toggle();
 
-        input_update(&input);
+        msg.cnt += 1;
+        msg.start_time = time_get_ms();
+
+        input_update(&msg.input_state);
+
+        driver_get_state(&msg.driver_state);
+
+        msg.checksum = protocol_crc16(&msg);
+
+        const uint8_t err = transport_send(&msg);
+
+        if(err != 0)
+        {
+            msg.error_cnt += 1;
+        }
     }
 
     return 0;

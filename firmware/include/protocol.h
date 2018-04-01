@@ -9,6 +9,9 @@
 
 #include <stdint.h>
 
+#include "input.h"
+#include "driver.h"
+
 #define PROTO_MSG_SIZE (64)
 #define PROTO_MSG_PREAMBLE (0xADC4)
 
@@ -18,8 +21,11 @@ typedef struct __attribute__((packed))
     uint32_t start_time;
     uint32_t end_time;
     uint16_t error_cnt;
-    // TODO
-    uint8_t reserved[64-14];
+    uint16_t cnt;
+    input_s input_state;
+    driver_s driver_state;
+    uint8_t log_msg_size;
+    uint8_t log_msg[27];
     uint16_t checksum;
 } proto_msg_s;
 
