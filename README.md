@@ -25,3 +25,7 @@
 | 1     | B5, B6, B7 | 3921.57 Hz |
 | 2     | D1, B4     | 3921.57 Hz |
 | 3     | C4, C5, C6 | 3921.57 Hz |
+
+## Diagram
+
+![wiring-diagram](images/wiring-diagram.png "wiring-diagram.png")
