@@ -12,6 +12,7 @@
 #include "board_def.h"
 #include "time.h"
 #include "pwm.h"
+#include "adc.h"
 #include "input.h"
 
 int main(void)

@@ -9,6 +9,7 @@
 #include <avr/interrupt.h>
 
 #include "board_def.h"
+#include "adc.h"
 #include "input.h"
 
 void input_init(void)

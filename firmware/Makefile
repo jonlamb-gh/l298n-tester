@@ -29,6 +29,7 @@ TARGET = firmware
 # List C source files here. (C dependencies are automatically generated.)
 SRC = src/time.c \
 	  src/pwm.c \
+	  src/adc.c \
 	  src/input.c \
 	  src/main.c
 
