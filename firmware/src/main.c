@@ -12,6 +12,7 @@
 #include "board_def.h"
 #include "time.h"
 #include "pwm.h"
+#include "input.h"
 
 int main(void)
 {
@@ -25,6 +26,8 @@ int main(void)
     time_init();
 
     pwm_init();
+
+    input_init();
 
     enable_interrupt();
 

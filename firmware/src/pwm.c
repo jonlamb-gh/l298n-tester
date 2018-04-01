@@ -2,6 +2,10 @@
  * @file pwm.c
  * @brief TODO.
  *
+ * See:
+ * - http://playground.arduino.cc/Code/Timer1
+ * - https://github.com/PaulStoffregen/TimerThree/blob/master/TimerThree.h
+ *
  */
 
 #include <stdint.h>
