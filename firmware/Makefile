@@ -27,10 +27,13 @@
 TARGET = firmware
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = src/time.c \
+SRC = src/usb_rawhid.c \
+	  src/time.c \
 	  src/pwm.c \
 	  src/adc.c \
 	  src/input.c \
+	  src/protocol.c \
+	  src/transport.c \
 	  src/main.c
 
 # Teensy++ 2.0

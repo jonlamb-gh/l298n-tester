@@ -55,7 +55,8 @@ static uint8_t read_buttons(void)
         set = (BUTTON_PIN & BUTTON_BITS_ALL);
     }
 
-    // TODO - return a set with enabled == active
+    // return an active-high set
+    set = ~set & BUTTON_BITS_ALL;
 
     return set;
 }
@@ -74,7 +75,8 @@ static uint8_t read_switches(void)
         set = (SWITCH_PIN & SWITCH_BITS_ALL);
     }
 
-    // TODO - return a set with enabled == active
+    // return an active-high set
+    set = ~set & SWITCH_BITS_ALL;
 
     return set;
 }
