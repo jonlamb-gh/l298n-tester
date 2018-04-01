@@ -57,12 +57,12 @@
 #define BUTTON_PORT PORTD
 #define BUTTON_BIT_BT0 (4)
 #define BUTTON_BIT_BT1 (5)
-#define BUTTON_BIT_BT2 (6)
+#define BUTTON_BIT_BT2 (7)
 
-#define SWITCH_PIN PIND
-#define SWITCH_DDR DDRD
-#define SWITCH_PORT PORTD
-#define SWITCH_BIT_SW0 (7)
+#define SWITCH_PIN PINE
+#define SWITCH_DDR DDRE
+#define SWITCH_PORT PORTE
+#define SWITCH_BIT_SW0 (0)
 
 #define POT_PIN PINF
 #define POT_DDR DDRF
