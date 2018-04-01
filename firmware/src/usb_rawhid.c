@@ -39,8 +39,8 @@
 
 // These 4 numbers identify your device.  Set these to
 // something that is (hopefully) not used by any others!
-#define VENDOR_ID		0x16C0
-#define PRODUCT_ID		0x0481
+#define VENDOR_ID		0x16C1
+#define PRODUCT_ID		0x0489
 #define RAWHID_USAGE_PAGE	0xFF12	// recommended: 0xFF00 to 0xFFFF
 #define RAWHID_USAGE		0x0212	// recommended: 0x0100 to 0xFFFF
 
