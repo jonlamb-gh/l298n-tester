@@ -13,6 +13,8 @@
 #include "adc.h"
 #include "driver.h"
 
+#define CS_MUX (ADC_MUX2)
+
 static driver_s g_state;
 
 static void init_state(void)
@@ -45,6 +47,8 @@ void driver_init(void)
 void driver_get_state(
         driver_s * const state)
 {
+    g_state.cs = adc_read(CS_MUX);
+
     state->in1 = g_state.in1;
     state->in2 = g_state.in2;
     state->en = g_state.en;
