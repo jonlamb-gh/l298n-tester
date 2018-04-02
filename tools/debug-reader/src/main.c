@@ -20,6 +20,7 @@ int main(int argc, char **argv)
 {
     int ret;
     int bytes_read;
+    unsigned long local_msg_cnt;
     char buffer[PROTO_MSG_SIZE + 1];
     char log_msg[PROTO_MSG_LOG_MSG_SIZE + 1];
 
@@ -52,8 +53,12 @@ int main(int argc, char **argv)
 
         if(bytes_read == PROTO_MSG_SIZE)
         {
+            local_msg_cnt += 1;
+
             const proto_msg_s * const msg =
                     (proto_msg_s * const) buffer;
+
+            printf("(local_cnt: %lu)\n", local_msg_cnt);
 
             printf("preamble: 0x%04lX\n", (unsigned long) msg->preamble);
             printf("start_time: %lu\n", (unsigned long) msg->start_time);

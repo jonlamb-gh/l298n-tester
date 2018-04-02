@@ -29,5 +29,5 @@ uint8_t transport_send(
             (const uint8_t*) msg,
             TRANSPORT_TX_TIMEOUT);
     
-    return ((status == 0) ? 0 : 1);
+    return ((status == PROTO_MSG_SIZE) ? 0 : 1);
 }

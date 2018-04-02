@@ -1,8 +1,8 @@
 ##########################################################
-# makefile for garden-monitor
+# makefile for usb-debug-reader
 ##########################################################
 
-TARGET := bin/debug-reader
+TARGET := bin/usb-debug-reader
 
 SRCS := src/hid.c src/main.c
 
