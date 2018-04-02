@@ -43,7 +43,7 @@ $(OBJS): %.o: %.c %.dep
 $(DEPS): %.dep: %.c Makefile
 	$(CC) $(CCFLAGS) $(INCLUDES) -MM $< > $@
 
-install:
+install: all
 	cp $(TARGET) ~/bin/
 
 clean:
