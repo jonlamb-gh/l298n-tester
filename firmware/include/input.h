@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#define INPUT_DEBOUNCE_TIME_MS (10)
+#define INPUT_DEBOUNCE_TIME_MS (20)
 
 typedef struct
 {
