@@ -5,6 +5,7 @@
 - list hw, etc
 - create diagram
 - inlining, optimizations
+- [simulation](https://github.com/buserror/simavr)
 
 ## Links
 
