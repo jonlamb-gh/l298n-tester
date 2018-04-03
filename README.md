@@ -6,6 +6,10 @@
 - create diagram
 - inlining, optimizations
 
+## Links
+
+- [Arduino PWM doc](https://www.arduino.cc/en/Tutorial/SecretsOfArduinoPWM)
+
 ## Hardware
 
 - [teensy++ 2.0](https://www.pjrc.com/store/teensypp.html)
@@ -24,7 +28,7 @@
 | 0     | D0         | 976.56 Hz  |
 | 1     | B5, B6, B7 | 3921.57 Hz |
 | 2     | D1, B4     | 3921.57 Hz |
-| 3     | C4, C5, C6 | 3921.57 Hz |
+| 3     | C4 = `C`, C5 = `B`, C6 = `A` | 3921.57 Hz |
 
 ## Diagram
 

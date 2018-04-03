@@ -69,9 +69,11 @@ int main(void)
 
     init_msg(0, &msg);
 
+    driver_set_en(600);
+
     while(1)
     {
-        time_delay_ms(1000);
+        time_delay_ms(500);
 
         led_toggle();
 

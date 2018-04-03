@@ -33,8 +33,6 @@ void driver_init(void)
 
     pwm_disable();
 
-    bit_clear(PWM_PORT, BIT(PWM_BIT));
-
     bit_set(DRIVER_IO_DDR, BIT(DRIVER_IO_BIT_IN1) | BIT(DRIVER_IO_BIT_IN2));
 
     bit_clear(DRIVER_IO_PORT, BIT(DRIVER_IO_BIT_IN1) | BIT(DRIVER_IO_BIT_IN2));

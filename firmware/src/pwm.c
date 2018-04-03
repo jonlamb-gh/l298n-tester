@@ -17,9 +17,9 @@
 
 #define TIMER3_RESOLUTION (65536UL)
 
-// we're using pin A -> C4
-#define COM3 (COM3A1)
-#define OCR3 (OCR3A)
+// we're using pin C4, which maps to channel C
+#define COM3 (COM3C1)
+#define OCR3 (OCR3C)
 
 static uint8_t clock_select_bits;
 static uint16_t pwm_period;
