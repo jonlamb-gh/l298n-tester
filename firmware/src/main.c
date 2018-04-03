@@ -58,6 +58,48 @@ static void send_msg(void)
     }
 }
 
+static void test_routine(void)
+{
+    led_on();
+
+    init_msg(tx_msg.error_cnt);
+
+    tx_msg.start_time = time_get_ms();
+
+    // TODO
+    //driver_configure(period, duty);
+
+    // TODO - toggle mechanism?
+    driver_set_direction(
+            tx_msg.input_state.bt0,
+            tx_msg.input_state.bt1);
+
+    // TODO - pt1/pt0
+    driver_set_en(500);
+
+    do
+    {
+        input_update(&tx_msg.input_state);
+
+        driver_get_state(&tx_msg.driver_state);
+
+        time_delay_ms(20);
+
+        send_msg();
+    }
+    while(tx_msg.input_state.bt2 != 0);
+
+    driver_set_en(0);
+
+    tx_msg.end_time = time_get_ms();
+
+    driver_get_state(&tx_msg.driver_state);
+
+    send_msg();
+
+    led_off();
+}
+
 int main(void)
 {
     wdt_disable();
@@ -93,6 +135,7 @@ int main(void)
 
         // bt2 -> on/off
 
+        led_off();
 
         input_update(&tx_msg.input_state);
 
@@ -100,69 +143,8 @@ int main(void)
         {
             led_on();
 
-            init_msg(tx_msg.error_cnt);
-
-            tx_msg.start_time = time_get_ms();
-
-            //driver_configure(period, duty);
-
-            driver_set_direction(
-                    tx_msg.input_state.bt0,
-                    tx_msg.input_state.bt1);
-
-            // TODO
-            driver_set_en(500);
-
-            do
-            {
-                input_update(&tx_msg.input_state);
-
-                driver_get_state(&tx_msg.driver_state);
-
-                time_delay_ms(20);
-
-                send_msg();
-            }
-            while(tx_msg.input_state.bt2 != 0);
-
-            driver_set_en(0);
-
-            tx_msg.end_time = time_get_ms();
-
-            driver_get_state(&tx_msg.driver_state);
-
-            send_msg();
-
-            led_off();
+            test_routine();
         }
-
-        // TODO - when to send msg?
-
-
-
-        /*
-        input_update(&msg.input_state);
-
-        time_delay_ms(500);
-
-        led_toggle();
-
-        msg.cnt += 1;
-        msg.start_time = time_get_ms();
-
-        input_update(&msg.input_state);
-
-        driver_get_state(&msg.driver_state);
-
-        msg.checksum = protocol_crc16(&msg);
-
-        const uint8_t err = transport_send(&msg);
-
-        if(err != 0)
-        {
-            msg.error_cnt += 1;
-        }
-        */
     }
 
     return 0;
