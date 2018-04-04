@@ -81,11 +81,28 @@ void driver_set_direction(
     }
 }
 
-void driver_set_en(
-        const uint16_t en)
+void driver_set_pwm(
+        const uint16_t duty,
+        const uint32_t period)
 {
-    g_state.en = en;
-    g_state.pwm_duty = en;
+    g_state.en = 0;
+    g_state.pwm_duty = duty;
+    g_state.pwm_period = period;
 
-    pwm_enable(en);
+    pwm_set_period(period);
+}
+
+void driver_enable(
+        const uint8_t en)
+{
+    if(en == 0)
+    {
+        g_state.en = 0;
+        pwm_disable();
+    }
+    else
+    {
+        g_state.en = g_state.pwm_duty;
+        pwm_enable(g_state.en);
+    }
 }

@@ -28,7 +28,11 @@ void driver_set_direction(
         const uint8_t in1,
         const uint8_t in2);
 
-void driver_set_en(
-        const uint16_t en);
+void driver_set_pwm(
+        const uint16_t duty,
+        const uint32_t period);
+
+void driver_enable(
+        const uint8_t en);
 
 #endif  /* DRIVER_H */

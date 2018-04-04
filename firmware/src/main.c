@@ -60,22 +60,25 @@ static void send_msg(void)
 
 static void test_routine(void)
 {
+    // TODO - pt1/pt0
+    // make one of them use a logarithmic pot. for pwm_period
+    const uint16_t pwm_duty = 500;
+    const uint32_t pwm_period = 400;
+
     led_on();
 
     init_msg(tx_msg.error_cnt);
 
     tx_msg.start_time = time_get_ms();
 
-    // TODO
-    //driver_configure(period, duty);
-
     // TODO - toggle mechanism?
     driver_set_direction(
             tx_msg.input_state.bt0,
             tx_msg.input_state.bt1);
 
-    // TODO - pt1/pt0
-    driver_set_en(500);
+    driver_set_pwm(pwm_duty, pwm_period);
+
+    driver_enable(1);
 
     do
     {
@@ -86,10 +89,16 @@ static void test_routine(void)
         time_delay_ms(20);
 
         send_msg();
+
+        led_toggle();
     }
     while(tx_msg.input_state.bt2 != 0);
 
-    driver_set_en(0);
+    led_on();
+
+    driver_enable(0);
+
+    driver_set_direction(0, 0);
 
     tx_msg.end_time = time_get_ms();
 
@@ -126,15 +135,6 @@ int main(void)
 
     while(1)
     {
-        // pt0/pt1 -> period/duty
-
-        // direction?
-
-        // bt0 -> in1 ?
-        // bt1 -> in2 ?
-
-        // bt2 -> on/off
-
         led_off();
 
         input_update(&tx_msg.input_state);

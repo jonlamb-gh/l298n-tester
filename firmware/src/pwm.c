@@ -136,4 +136,5 @@ void pwm_disable(void)
 {
     TCCR3A &= ~BIT(COM3);
     stop();
+    bit_clear(PWM_PORT, BIT(PWM_BIT));
 }
