@@ -1,8 +1,8 @@
 ##########################################################
-# makefile for usb-debug-reader
+# makefile for usb-tester-reader
 ##########################################################
 
-TARGET := bin/usb-debug-reader
+TARGET := bin/usb-tester-reader
 
 SRCS := src/hid.c src/main.c
 

@@ -43,7 +43,7 @@ int main(int argc, char **argv)
                 0,
                 buffer,
                 PROTO_MSG_SIZE,
-                1100);
+                10 * 1000UL);
 
         if(bytes_read < 0)
         {
