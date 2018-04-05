@@ -1,5 +1,5 @@
 ##########################################################
-# makefile for usb-tester-reader
+# makefile for firmware-sim
 ##########################################################
 
 TARGET := bin/firmware-sim

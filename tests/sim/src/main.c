@@ -49,6 +49,7 @@ int main(int argc, char **argv)
 
     avr->log = LOG_DEBUG;
     avr->gdb_port = 1234;
+    //avr->trace = 1;
 
     avr_load_firmware(avr, &frmw);
 
