@@ -19,6 +19,14 @@
 #include "protocol.h"
 #include "transport.h"
 
+#ifndef F_CPU
+#error "F_CPU not defined"
+#endif
+
+// TODO - ifdef DEBUG?
+#include "avr/avr_mcu_section.h"
+AVR_MCU(F_CPU, "at90usb1286");
+
 static proto_msg_s tx_msg;
 
 static void wait_for_transport(void)
