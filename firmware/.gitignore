@@ -1,0 +1,4 @@
+/firmware.*
+/src/*.o
+/src/*.lst
+/.dep

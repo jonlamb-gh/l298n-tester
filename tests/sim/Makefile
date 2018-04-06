@@ -21,7 +21,7 @@ CCFLAGS += -Wall -Wextra -Werror \
 
 LDFLAGS =
 
-INCLUDES = `pkg-config simavr --cflags` -Iinclude
+INCLUDES = `pkg-config simavr --cflags`
 
 LIBS = `pkg-config simavr --libs`
 
