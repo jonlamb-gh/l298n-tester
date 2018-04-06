@@ -78,6 +78,9 @@ OPT = 2
 #     AVR [Extended] COFF format requires stabs, plus an avr-objcopy run.
 DEBUG = dwarf-2
 
+# Debugging 
+DEBUG_CDEFS = -DDEBUG_BUILD
+
 # List any extra directories to look for include files here.
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
@@ -109,8 +112,8 @@ CPPDEFS = -DF_CPU=$(F_CPU)UL
 #  -Wall...:     warning level
 #  -Wa,...:      tell GCC to pass this to the assembler.
 #    -adhlns...: create assembler listing
-CFLAGS = -g$(DEBUG)
-CFLAGS += $(CDEFS)
+#CFLAGS = -g$(DEBUG)
+CFLAGS = $(CDEFS)
 CFLAGS += -O$(OPT)
 CFLAGS += -funsigned-char
 CFLAGS += -funsigned-bitfields
@@ -136,8 +139,8 @@ CFLAGS += $(CSTANDARD)
 #  -Wall...:     warning level
 #  -Wa,...:      tell GCC to pass this to the assembler.
 #    -adhlns...: create assembler listing
-CPPFLAGS = -g$(DEBUG)
-CPPFLAGS += $(CPPDEFS)
+#CPPFLAGS = -g$(DEBUG)
+CPPFLAGS = $(CPPDEFS)
 CPPFLAGS += -O$(OPT)
 CPPFLAGS += -funsigned-char
 CPPFLAGS += -funsigned-bitfields
@@ -396,17 +399,9 @@ ifeq ($(DEBUG_BACKEND),simulavr)
 endif
 	@echo break main >> $(GDBINIT_FILE)
 
+debug: CDEFS += $(DEBUG_CDEFS)
+debug: CDEFS += -g$(DEBUG)
 debug: gdb-config $(TARGET).elf
-ifeq ($(DEBUG_BACKEND), avarice)
-	@echo Starting AVaRICE - Press enter when "waiting to connect" message displays.
-	@$(WINSHELL) /c start avarice --jtag $(JTAG_DEV) --erase --program --file \
-	$(TARGET).elf $(DEBUG_HOST):$(DEBUG_PORT)
-	@$(WINSHELL) /c pause
-else
-	@$(WINSHELL) /c start simulavr --gdbserver --device $(MCU) --clock-freq \
-	$(DEBUG_MFREQ) --port $(DEBUG_PORT)
-endif
-	@$(WINSHELL) /c start avr-$(DEBUG_UI) --command=$(GDBINIT_FILE)
 
 # Convert ELF to COFF for use in debugging / simulating in AVR Studio or VMLAB.
 COFFCONVERT = $(OBJCOPY) --debugging
@@ -517,6 +512,7 @@ clean_list :
 	$(REMOVE) $(SRC:.c=.s)
 	$(REMOVE) $(SRC:.c=.d)
 	$(REMOVE) $(SRC:.c=.i)
+	$(REMOVE) __avr_gdbinit
 	$(REMOVEDIR) .dep
 
 # Create object files directory

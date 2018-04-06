@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <signal.h>
 
 #include "sim_avr.h"
 #include "sim_elf.h"
@@ -15,10 +16,21 @@
 #include "sim_vcd_file.h"
 #include "avr_ioport.h"
 
+static sig_atomic_t global_exit_signal;
+
+static void sig_handler(int sig)
+{
+    if(sig == SIGINT)
+    {
+        global_exit_signal = 1;
+    }
+}
+
 int main(int argc, char **argv)
 {
     elf_firmware_t frmw;
     avr_vcd_t vcd_file;
+    struct sigaction act;
 
     if(argc != 2)
     {
@@ -30,6 +42,17 @@ int main(int argc, char **argv)
     const char * const frmw_name = argv[1];
 
     (void) memset(&frmw, 0, sizeof(frmw));
+
+    global_exit_signal = 0;
+    memset(&act, 0, sizeof(act));
+    act.sa_flags = SA_RESTART;
+    act.sa_handler = sig_handler;
+
+    if(sigaction(SIGINT, &act, 0) < 0)
+    {
+        fprintf(stderr, "sigaction(SIGINT) failed\n");
+        exit(1);
+    }
 
     printf("firmware: %s\n", frmw_name);
 
@@ -53,19 +76,27 @@ int main(int argc, char **argv)
 
     avr_load_firmware(avr, &frmw);
 
-    // usec
-    avr_vcd_init(avr, "gtkwave_output.vcd", &vcd_file, 100000);
+    // flush period in usec
+    avr_vcd_init(avr, "gtkwave_output.vcd", &vcd_file, 100000UL);
 
     avr_vcd_add_signal(
             &vcd_file,
             avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('B'), IOPORT_IRQ_PIN_ALL), 8, "PORTB");
+
+    avr_vcd_add_signal(
+            &vcd_file,
+            avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), IOPORT_IRQ_PIN_ALL), 8, "PORTC");
+
+    avr_vcd_add_signal(
+            &vcd_file,
+            avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), IOPORT_IRQ_PIN_ALL), 8, "PORTD");
 
     avr_vcd_start(&vcd_file);
 
     printf("starting simulation\n");
 
     uint32_t cycles = 0;
-    const uint32_t MAX_CYCLES = 0xFFFFFF;
+    const uint32_t MAX_CYCLES = 0xFFFFFFF;
 
     int state = cpu_Running;
     while((state != cpu_Done) && (state != cpu_Crashed))
@@ -73,11 +104,14 @@ int main(int argc, char **argv)
         state = avr_run(avr);
 
         cycles += 1;
-        if(cycles >= MAX_CYCLES)
+
+        if((cycles >= MAX_CYCLES) || (global_exit_signal != 0))
         {
             state = cpu_Done;
         }
     }
+
+    avr_vcd_stop(&vcd_file);
 
     if(avr != NULL)
     {

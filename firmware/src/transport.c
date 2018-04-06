@@ -14,12 +14,18 @@
 
 void transport_init(void)
 {
+#ifndef DEBUG_BUILD
     usb_init();
+#endif
 }
 
 uint8_t transport_ready(void)
 {
+#ifndef DEBUG_BUILD
     return ((usb_configured() == 0) ? 0 : 1);
+#else
+    return 1;
+#endif
 }
 
 uint8_t transport_send(

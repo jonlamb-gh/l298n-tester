@@ -23,9 +23,11 @@
 #error "F_CPU not defined"
 #endif
 
-// TODO - ifdef DEBUG?
+// embed F_CPU/mmcu in the ELF for debugging/simulation
+#ifdef DEBUG_BUILD
 #include "avr/avr_mcu_section.h"
 AVR_MCU(F_CPU, "at90usb1286");
+#endif
 
 static proto_msg_s tx_msg;
 
