@@ -32,15 +32,24 @@ int main(int argc, char **argv)
     elf_firmware_t frmw;
     avr_vcd_t vcd_file;
     struct sigaction act;
+    int verbose = 0;
 
-    if(argc != 2)
+    if((argc < 2) || (argc > 3))
     {
+        fprintf(stderr, "args error\n");
         exit(1);
     }
 
-    // TODO
-
+    // TODO clean this mess up
     const char * const frmw_name = argv[1];
+
+    if(argc == 3)
+    {
+        if(strcmp("-v", argv[2]) == 0)
+        {
+            verbose = 1;
+        }
+    }
 
     (void) memset(&frmw, 0, sizeof(frmw));
 
@@ -73,7 +82,11 @@ int main(int argc, char **argv)
 
     avr->log = LOG_DEBUG;
     avr->gdb_port = 1234;
-    //avr->trace = 1;
+
+    if(verbose != 0)
+    {
+        avr->trace = 1;
+    }
 
     avr_load_firmware(avr, &frmw);
 
