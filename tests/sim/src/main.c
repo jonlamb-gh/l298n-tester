@@ -15,6 +15,7 @@
 #include "sim_gdb.h"
 #include "sim_vcd_file.h"
 #include "avr_ioport.h"
+#include "avr_timer.h"
 
 static sig_atomic_t global_exit_signal;
 
@@ -91,12 +92,17 @@ int main(int argc, char **argv)
             &vcd_file,
             avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), IOPORT_IRQ_PIN_ALL), 8, "PORTD");
 
+    avr_vcd_add_signal(
+            &vcd_file,
+            avr_get_interrupt_irq(avr, 22 /*TIMER0_COMPA_vect*/), 1 , "TIMER0_COMPA");
+
     avr_vcd_start(&vcd_file);
 
     printf("starting simulation\n");
 
     uint32_t cycles = 0;
-    const uint32_t MAX_CYCLES = 0xFFFFFFF;
+    // ~5 seconds
+    const uint32_t MAX_CYCLES = 0x3BFFFFF;
 
     int state = cpu_Running;
     while((state != cpu_Done) && (state != cpu_Crashed))
