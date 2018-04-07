@@ -33,7 +33,9 @@ static void timer_irq_changed_hook(
         uint32_t value,
         void * param)
 {
-    //printf("***IRQ***\n");
+    // TODO - should the core/hw take care of this?
+    //avr_raise_irq(irq, 0);
+    //printf("IRQ cb name: %s\n", irq->name);
 }
 
 int main(int argc, char **argv)
@@ -99,9 +101,12 @@ int main(int argc, char **argv)
 
     avr_load_firmware(avr, &frmw);
 
+    avr_irq_t * const irq = avr_get_interrupt_irq(avr, 21 /*TIMER0_COMPA_vect*/);
+
+    printf("IRQ name: %s\n", irq->name);
+
     avr_irq_register_notify(
-            //avr_timer_getirq(avr, AVR_IOCTL_TIMER_GETIRQ('0'), TIMER_IRQ_OUT_COMP),
-            avr_get_interrupt_irq(avr, 22 /*TIMER0_COMPA_vect*/),
+            irq,
             timer_irq_changed_hook,
             NULL);
 
