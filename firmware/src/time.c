@@ -12,7 +12,7 @@
 #include "board_def.h"
 #include "time.h"
 
-#define timer8_clear() {TCCR0A=0; TCNT0=0; OCR0A=0;}
+#define timer8_clear() {TCCR0A=0; TCNT0=0;}
 #define timer8_set_counter(value) (TCNT0 = value)
 #define timer8_set_compare_a(value) (OCR0A = value)
 #define timer8_overflow_it_enable() (TIMSK0 |= BIT(TOIE0))
