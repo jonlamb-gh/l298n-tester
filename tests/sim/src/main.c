@@ -19,12 +19,21 @@
 
 static sig_atomic_t global_exit_signal;
 
-static void sig_handler(int sig)
+static void sig_handler(
+        int sig)
 {
     if(sig == SIGINT)
     {
         global_exit_signal = 1;
     }
+}
+
+static void timer_irq_changed_hook(
+        struct avr_irq_t * irq,
+        uint32_t value,
+        void * param)
+{
+    //printf("***IRQ***\n");
 }
 
 int main(int argc, char **argv)
@@ -90,24 +99,38 @@ int main(int argc, char **argv)
 
     avr_load_firmware(avr, &frmw);
 
+    avr_irq_register_notify(
+            //avr_timer_getirq(avr, AVR_IOCTL_TIMER_GETIRQ('0'), TIMER_IRQ_OUT_COMP),
+            avr_get_interrupt_irq(avr, 22 /*TIMER0_COMPA_vect*/),
+            timer_irq_changed_hook,
+            NULL);
+
     // flush period in usec
     avr_vcd_init(avr, "gtkwave_output.vcd", &vcd_file, 100000UL);
 
     avr_vcd_add_signal(
             &vcd_file,
-            avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('B'), IOPORT_IRQ_PIN_ALL), 8, "PORTB");
+            avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('B'), IOPORT_IRQ_PIN_ALL),
+            8,
+            "PORTB");
 
     avr_vcd_add_signal(
             &vcd_file,
-            avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), IOPORT_IRQ_PIN_ALL), 8, "PORTC");
+            avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), IOPORT_IRQ_PIN_ALL),
+            8,
+            "PORTC");
 
     avr_vcd_add_signal(
             &vcd_file,
-            avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), IOPORT_IRQ_PIN_ALL), 8, "PORTD");
+            avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), IOPORT_IRQ_PIN_ALL),
+            8,
+            "PORTD");
 
     avr_vcd_add_signal(
             &vcd_file,
-            avr_get_interrupt_irq(avr, 22 /*TIMER0_COMPA_vect*/), 1 , "TIMER0_COMPA");
+            avr_get_interrupt_irq(avr, 22 /*TIMER0_COMPA_vect*/),
+            1,
+            "TIMER0_COMPA");
 
     avr_vcd_start(&vcd_file);
 
