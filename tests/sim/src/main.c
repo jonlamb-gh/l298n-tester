@@ -114,14 +114,25 @@ int main(int argc, char **argv)
             timer_irq_changed_hook,
             NULL);
 
+    const char *btn_name= "btn2";
+    avr_irq_t * const btn_irq = avr_alloc_irq(&avr->irq_pool, 0, 1, &btn_name);
+
+    // "connect" the output irq of the button to the port pin of the AVR
+    avr_connect_irq(
+        btn_irq,
+        avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), IOPORT_IRQ_PIN7));
+
+    // 'raise' button, it's a "pullup"
+    avr_raise_irq(btn_irq, 1);
+
     // flush period in usec
-    avr_vcd_init(avr, "gtkwave_output.vcd", &vcd_file, 100000UL);
+    avr_vcd_init(avr, "gtkwave_output.vcd", &vcd_file, 10000UL);
 
     avr_vcd_add_signal(
             &vcd_file,
-            avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('B'), IOPORT_IRQ_PIN_ALL),
-            8,
-            "TIFR0");
+            btn_irq,
+            1,
+            "BTN2");
 
     avr_vcd_add_signal(
             &vcd_file,
@@ -129,7 +140,7 @@ int main(int argc, char **argv)
             8,
             "PORTC");
 
-    // LED on D6
+    // LED on D6, btn2 on D7
     avr_vcd_add_signal(
             &vcd_file,
             avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), IOPORT_IRQ_PIN_ALL),
@@ -140,20 +151,29 @@ int main(int argc, char **argv)
             &vcd_file,
             int_irq,
             1,
-            "TIMER0_COMPA_int");
-
-    avr_vcd_start(&vcd_file);
+            "TIMER0_COMPA");
 
     printf("starting simulation\n");
+    avr_vcd_start(&vcd_file);
 
     uint32_t cycles = 0;
+    uint8_t do_btn_press = 1;
+
     // ~5 seconds
     const uint32_t MAX_CYCLES = 0x3BFFFFF;
+    const uint32_t BTN_CYCLES = MAX_CYCLES/4;
 
     int state = cpu_Running;
     while((state != cpu_Done) && (state != cpu_Crashed))
     {
         state = avr_run(avr);
+
+        if((cycles > BTN_CYCLES) && (do_btn_press == 1))
+        {
+            avr_raise_irq(btn_irq, 0);
+
+            do_btn_press = 0;
+        }
 
         cycles += 1;
 
