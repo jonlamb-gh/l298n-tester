@@ -122,9 +122,6 @@ int main(int argc, char **argv)
         btn_irq,
         avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), IOPORT_IRQ_PIN7));
 
-    // 'raise' button, it's a "pullup"
-    avr_raise_irq(btn_irq, 1);
-
     // flush period in usec
     avr_vcd_init(avr, "gtkwave_output.vcd", &vcd_file, 10000UL);
 
@@ -156,12 +153,15 @@ int main(int argc, char **argv)
     printf("starting simulation\n");
     avr_vcd_start(&vcd_file);
 
+    // 'raise' button, it's a "pullup"
+    avr_raise_irq(btn_irq, 1);
+
     uint32_t cycles = 0;
     uint8_t do_btn_press = 1;
 
     // ~5 seconds
     const uint32_t MAX_CYCLES = 0x3BFFFFF;
-    const uint32_t BTN_CYCLES = MAX_CYCLES/4;
+    const uint32_t BTN_CYCLES = MAX_CYCLES/2;
 
     int state = cpu_Running;
     while((state != cpu_Done) && (state != cpu_Crashed))
@@ -170,6 +170,7 @@ int main(int argc, char **argv)
 
         if((cycles > BTN_CYCLES) && (do_btn_press == 1))
         {
+            printf("signal button\n");
             avr_raise_irq(btn_irq, 0);
 
             do_btn_press = 0;
