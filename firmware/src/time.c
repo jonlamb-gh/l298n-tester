@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
 #include "board_def.h"
 #include "time.h"
@@ -30,35 +31,12 @@ ISR(TIMER0_COMPA_vect)
 }
 
 static void delay_ms(
-        const uint16_t ms)
+        uint16_t ms)
 {
-    uint8_t done;
-    uint32_t time;
-
-    // TODO - make this better or use util _delay_ms()
-    disable_interrupt();
-    time = global_counter_ms;
-    enable_interrupt();
-
-    time += (uint32_t) ms;
-    done = 0;
-
-    while(done == 0)
+    while(ms != 0)
     {
-        disable_interrupt();
-
-        if(global_counter_ms == time)
-        //if(global_counter_us >= time)
-        {
-            done = 1;
-        }
-        else if(global_counter_ms == (uint32_t) ms)
-        {
-            // bad overflow detection
-            done = 1;
-        }
-
-        enable_interrupt();
+        _delay_ms(1);
+        ms -= 1;
     }
 }
 

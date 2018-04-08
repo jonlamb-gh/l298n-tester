@@ -17,6 +17,8 @@
 #include "avr_ioport.h"
 #include "avr_timer.h"
 
+#define TIMER0_COMPA_vect (21)
+
 static sig_atomic_t global_exit_signal;
 
 static void sig_handler(
@@ -33,9 +35,7 @@ static void timer_irq_changed_hook(
         uint32_t value,
         void * param)
 {
-    // TODO - should the core/hw take care of this?
-    //avr_raise_irq(irq, 0);
-    //printf("IRQ cb name: %s\n", irq->name);
+    //printf("*** IRQ cb name: %s\n", irq->name);
 }
 
 int main(int argc, char **argv)
@@ -101,12 +101,16 @@ int main(int argc, char **argv)
 
     avr_load_firmware(avr, &frmw);
 
-    avr_irq_t * const irq = avr_get_interrupt_irq(avr, 21 /*TIMER0_COMPA_vect*/);
+    avr_irq_t * const int_irq = avr_get_interrupt_irq(avr, TIMER0_COMPA_vect);
 
-    printf("IRQ name: %s\n", irq->name);
+    printf(
+            "TIMER0_COMPA_vect (%u | 0x%02X) IRQ name: %s\n",
+            (unsigned int) TIMER0_COMPA_vect,
+            (unsigned int) TIMER0_COMPA_vect,
+            int_irq->name);
 
     avr_irq_register_notify(
-            irq,
+            int_irq,
             timer_irq_changed_hook,
             NULL);
 
@@ -117,7 +121,7 @@ int main(int argc, char **argv)
             &vcd_file,
             avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('B'), IOPORT_IRQ_PIN_ALL),
             8,
-            "PORTB");
+            "TIFR0");
 
     avr_vcd_add_signal(
             &vcd_file,
@@ -125,6 +129,7 @@ int main(int argc, char **argv)
             8,
             "PORTC");
 
+    // LED on D6
     avr_vcd_add_signal(
             &vcd_file,
             avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), IOPORT_IRQ_PIN_ALL),
@@ -133,9 +138,9 @@ int main(int argc, char **argv)
 
     avr_vcd_add_signal(
             &vcd_file,
-            avr_get_interrupt_irq(avr, 22 /*TIMER0_COMPA_vect*/),
+            int_irq,
             1,
-            "TIMER0_COMPA");
+            "TIMER0_COMPA_int");
 
     avr_vcd_start(&vcd_file);
 
