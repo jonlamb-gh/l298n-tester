@@ -11,6 +11,8 @@
 
 #define ADC_DEFAULT_SAMPLE_TIME_MS (15UL)
 
+#define ADC_VALUE_MAX (1023)
+
 // MUX for ADC0:7
 #define ADC_MUX0 (0x00)
 #define ADC_MUX1 (0x01)

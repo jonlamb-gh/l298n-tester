@@ -11,12 +11,16 @@
 
 #define PWM_DEFAULT_PERIOD (1000000UL)
 
+//#define PWM_PERIOD_MAX (4194240UL)
+// 1/8
+#define PWM_PERIOD_MAX (1048560UL)
+#define PWM_DUTY_MAX (1023UL)
+
 void pwm_init(void);
 
 void pwm_set_period(
         const uint32_t period);
 
-// TODO - 0-1023?
 void pwm_enable(
         const uint16_t duty);
 

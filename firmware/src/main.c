@@ -31,6 +31,16 @@ AVR_MCU(F_CPU, "at90usb1286");
 
 static proto_msg_s tx_msg;
 
+static int32_t map_i32(
+        const int32_t x,
+        const int32_t in_min,
+        const int32_t in_max,
+        const int32_t out_min,
+        const int32_t out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 static void wait_for_transport(void)
 {
     time_delay_ms(1000);
@@ -68,16 +78,34 @@ static void send_msg(void)
     }
 }
 
-static void test_routine(void)
+static void set_pwm(void)
 {
     // pt0 is logarithmic, mapped to pwm_period
     // pt1 is linear, mapped to pwm_duty
-    const uint16_t pwm_duty = 500;
-    const uint32_t pwm_period = 400;
+    const uint16_t pwm_duty = (uint16_t) map_i32(
+            tx_msg.input_state.pt1,
+            0,
+            ADC_VALUE_MAX,
+            0,
+            PWM_DUTY_MAX);
 
+    const uint32_t pwm_period = (uint32_t) map_i32(
+            tx_msg.input_state.pt0,
+            0,
+            ADC_VALUE_MAX,
+            0,
+            PWM_PERIOD_MAX);
+
+    driver_set_pwm(pwm_duty, pwm_period);
+}
+
+static void test_routine(void)
+{
     led_on();
 
     init_msg(tx_msg.error_cnt);
+
+    input_update(&tx_msg.input_state);
 
     tx_msg.start_time = time_get_ms();
 
@@ -86,7 +114,7 @@ static void test_routine(void)
             tx_msg.input_state.bt0,
             tx_msg.input_state.bt1);
 
-    driver_set_pwm(pwm_duty, pwm_period);
+    set_pwm();
 
     driver_enable(1);
 
@@ -142,7 +170,7 @@ int main(void)
     wait_for_transport();
 
     init_msg(0);
-    
+
     while(1)
     {
         input_update(&tx_msg.input_state);
