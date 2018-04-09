@@ -101,5 +101,12 @@ void input_update(
     input->sw0 = (sw_set >> SWITCH_BIT_SW0) & 0x01;
 
     input->pt0 = adc_read(PT0_MUX);
+    time_delay_ms(ADC_DEFAULT_SAMPLE_TIME_MS);
+    input->pt0 = adc_read(PT0_MUX);
+
+    time_delay_ms(ADC_DEFAULT_SAMPLE_TIME_MS);
+
+    input->pt1 = adc_read(PT1_MUX);
+    time_delay_ms(ADC_DEFAULT_SAMPLE_TIME_MS);
     input->pt1 = adc_read(PT1_MUX);
 }

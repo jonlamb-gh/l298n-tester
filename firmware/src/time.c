@@ -24,10 +24,19 @@
 #define timer8_clear_compare_a_it() (TIFR0 |= BIT(OCF0A))
 
 static volatile uint32_t global_counter_ms;
+static volatile uint32_t global_timer_counter;
+static volatile uint8_t global_timer_reached;
 
 ISR(TIMER0_COMPA_vect)
 {
     global_counter_ms += 1;
+    global_timer_counter += 1;
+
+    if(global_timer_counter == TIME_EVENT_PERIOD_MS)
+    {
+        global_timer_counter = 0;
+        global_timer_reached = 1;
+    }
 }
 
 static void delay_ms(
@@ -66,6 +75,8 @@ void time_init(void)
     for(i = 0; i < 0xFFFF; i += 1);
 
     global_counter_ms = 0;
+    global_timer_counter = 0;
+    global_timer_reached = 0;
 
     enable_interrupt();
 }
@@ -86,4 +97,17 @@ uint32_t time_get_ms(void)
     enable_interrupt();
 
     return timestamp;
+}
+
+uint8_t time_get_and_clear_event(void)
+{
+    disable_interrupt();
+
+    const uint8_t status = global_timer_reached;
+
+    global_timer_reached = 0;
+
+    enable_interrupt();
+
+    return status;
 }

@@ -70,8 +70,8 @@ static void send_msg(void)
 
 static void test_routine(void)
 {
-    // TODO - pt1/pt0
-    // make one of them use a logarithmic pot. for pwm_period
+    // pt0 is logarithmic, mapped to pwm_period
+    // pt1 is linear, mapped to pwm_duty
     const uint16_t pwm_duty = 500;
     const uint32_t pwm_period = 400;
 
@@ -142,18 +142,25 @@ int main(void)
     wait_for_transport();
 
     init_msg(0);
-
+    
     while(1)
     {
-        led_off();
-
         input_update(&tx_msg.input_state);
 
         if(tx_msg.input_state.bt2 != 0)
         {
             led_on();
-
             test_routine();
+            led_off();
+        }
+
+        // periodically send out a message
+        if(time_get_and_clear_event() != 0)
+        {
+            led_toggle();
+            tx_msg.start_time = time_get_ms();
+            driver_get_state(&tx_msg.driver_state);
+            send_msg();
         }
     }
 

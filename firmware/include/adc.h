@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#define ADC_DEFAULT_SAMPLE_TIME_MS (15UL)
+
 // MUX for ADC0:7
 #define ADC_MUX0 (0x00)
 #define ADC_MUX1 (0x01)

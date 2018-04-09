@@ -11,6 +11,7 @@
 #include "board_def.h"
 #include "pwm.h"
 #include "adc.h"
+#include "time.h"
 #include "driver.h"
 
 #define CS_MUX (ADC_MUX2)
@@ -45,6 +46,8 @@ void driver_init(void)
 void driver_get_state(
         driver_s * const state)
 {
+    g_state.cs = adc_read(CS_MUX);
+    time_delay_ms(ADC_DEFAULT_SAMPLE_TIME_MS);
     g_state.cs = adc_read(CS_MUX);
 
     state->in1 = g_state.in1;
