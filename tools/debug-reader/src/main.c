@@ -79,6 +79,7 @@ int main(int argc, char **argv)
             printf("  in2: %lu\n", (unsigned long) msg->driver_state.in2);
             printf("  en: %lu\n", (unsigned long) msg->driver_state.en);
             printf("  cs: %lu\n", (unsigned long) msg->driver_state.cs);
+            printf("  delay_interval: %lu\n", (unsigned long) msg->driver_state.delay_interval);
             printf(
                     "  pwm_duty: %lu = %% %.2f\n",
                     (unsigned long) msg->driver_state.pwm_duty,

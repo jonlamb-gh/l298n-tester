@@ -9,7 +9,8 @@
 
 #include <stdint.h>
 
-#define ADC_DEFAULT_SAMPLE_TIME_MS (15UL)
+//#define ADC_DEFAULT_SAMPLE_TIME_MS (15UL)
+#define ADC_DEFAULT_SAMPLE_TIME_MS (5UL)
 
 #define ADC_VALUE_MAX (1023)
 

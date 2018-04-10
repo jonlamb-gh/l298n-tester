@@ -89,24 +89,33 @@ void input_init(void)
 }
 
 void input_update(
+        const uint8_t flags,
         input_s * const input)
 {
-    const uint8_t btn_set = read_buttons();
-    const uint8_t sw_set = read_switches();
+    if((flags & INPUT_GROUP_BUTTON) != 0)
+    {
+        const uint8_t btn_set = read_buttons();
 
-    input->bt0 = (btn_set >> BUTTON_BIT_BT0) & 0x01;
-    input->bt1 = (btn_set >> BUTTON_BIT_BT1) & 0x01;
-    input->bt2 = (btn_set >> BUTTON_BIT_BT2) & 0x01;
+        input->bt0 = (btn_set >> BUTTON_BIT_BT0) & 0x01;
+        input->bt1 = (btn_set >> BUTTON_BIT_BT1) & 0x01;
+        input->bt2 = (btn_set >> BUTTON_BIT_BT2) & 0x01;
+    }
 
-    input->sw0 = (sw_set >> SWITCH_BIT_SW0) & 0x01;
+    if((flags & INPUT_GROUP_SWITCH) != 0)
+    {
+        const uint8_t sw_set = read_switches();
 
-    input->pt0 = adc_read(PT0_MUX);
-    time_delay_ms(ADC_DEFAULT_SAMPLE_TIME_MS);
-    input->pt0 = adc_read(PT0_MUX);
+        input->sw0 = (sw_set >> SWITCH_BIT_SW0) & 0x01;
+    }
 
-    time_delay_ms(ADC_DEFAULT_SAMPLE_TIME_MS);
+    if((flags & INPUT_GROUP_POT) != 0)
+    {
+        input->pt0 = adc_read(PT0_MUX);
+        time_delay_ms(ADC_DEFAULT_SAMPLE_TIME_MS);
+        input->pt0 = adc_read(PT0_MUX);
 
-    input->pt1 = adc_read(PT1_MUX);
-    time_delay_ms(ADC_DEFAULT_SAMPLE_TIME_MS);
-    input->pt1 = adc_read(PT1_MUX);
+        input->pt1 = adc_read(PT1_MUX);
+        time_delay_ms(ADC_DEFAULT_SAMPLE_TIME_MS);
+        input->pt1 = adc_read(PT1_MUX);
+    }
 }

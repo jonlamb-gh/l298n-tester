@@ -15,7 +15,7 @@
 #define PROTO_MSG_SIZE (64)
 #define PROTO_MSG_PREAMBLE (0xADC4)
 
-#define PROTO_MSG_LOG_MSG_SIZE (22)
+#define PROTO_MSG_LOG_MSG_SIZE (20)
 
 typedef struct __attribute__((packed))
 {

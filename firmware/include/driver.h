@@ -15,6 +15,7 @@ typedef struct
     uint8_t in2;
     uint16_t en;
     uint16_t cs;
+    uint16_t delay_interval;
     uint16_t pwm_duty;
     uint32_t pwm_period;
     uint8_t pwm_cs_bits;
