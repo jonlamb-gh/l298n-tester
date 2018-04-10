@@ -23,19 +23,19 @@
 #define timer8_clear_overflow_it() (TIFR0 |= BIT(TOV0))
 #define timer8_clear_compare_a_it() (TIFR0 |= BIT(OCF0A))
 
-static volatile uint32_t global_counter_ms;
-static volatile uint32_t global_timer_counter;
-static volatile uint8_t global_timer_reached;
+static volatile uint32_t g_counter_ms;
+static volatile uint32_t g_timer_counter;
+static volatile uint8_t g_timer_reached;
 
 ISR(TIMER0_COMPA_vect)
 {
-    global_counter_ms += 1;
-    global_timer_counter += 1;
+    g_counter_ms += 1;
+    g_timer_counter += 1;
 
-    if(global_timer_counter == TIME_EVENT_PERIOD_MS)
+    if(g_timer_counter == TIME_EVENT_PERIOD_MS)
     {
-        global_timer_counter = 0;
-        global_timer_reached = 1;
+        g_timer_counter = 0;
+        g_timer_reached = 1;
     }
 }
 
@@ -74,9 +74,9 @@ void time_init(void)
 
     for(i = 0; i < 0xFFFF; i += 1);
 
-    global_counter_ms = 0;
-    global_timer_counter = 0;
-    global_timer_reached = 0;
+    g_counter_ms = 0;
+    g_timer_counter = 0;
+    g_timer_reached = 0;
 
     enable_interrupt();
 }
@@ -93,7 +93,7 @@ void time_delay_ms(
 uint32_t time_get_ms(void)
 {
     disable_interrupt();
-    const uint32_t timestamp = global_counter_ms;
+    const uint32_t timestamp = g_counter_ms;
     enable_interrupt();
 
     return timestamp;
@@ -103,9 +103,9 @@ uint8_t time_get_and_clear_event(void)
 {
     disable_interrupt();
 
-    const uint8_t status = global_timer_reached;
+    const uint8_t status = g_timer_reached;
 
-    global_timer_reached = 0;
+    g_timer_reached = 0;
 
     enable_interrupt();
 

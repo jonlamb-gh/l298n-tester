@@ -79,8 +79,30 @@ int main(int argc, char **argv)
             printf("  in2: %lu\n", (unsigned long) msg->driver_state.in2);
             printf("  en: %lu\n", (unsigned long) msg->driver_state.en);
             printf("  cs: %lu\n", (unsigned long) msg->driver_state.cs);
-            printf("  pwm_duty: %lu\n", (unsigned long) msg->driver_state.pwm_duty);
+            printf(
+                    "  pwm_duty: %lu = %% %.2f\n",
+                    (unsigned long) msg->driver_state.pwm_duty,
+                    (double) msg->driver_state.pwm_duty / 1023.0);
             printf("  pwm_period: %lu\n", (unsigned long) msg->driver_state.pwm_period);
+            printf("  pwm_cs_bits: 0x%02X\n", (unsigned int) msg->driver_state.pwm_cs_bits);
+            printf("  pwm_ocr: %lu\n", (unsigned long) msg->driver_state.pwm_ocr);
+            printf("  pwm_icr: %lu\n", (unsigned long) msg->driver_state.pwm_icr);
+
+            const double clock_map[] =
+            {
+                [0b000] = 0.0,
+                [0b001] = 1.0,
+                [0b010] = 8.0,
+                [0b011] = 64.0,
+                [0b100] = 256.0,
+                [0b101] = 1024.0,
+            };
+
+            const double clock = clock_map[msg->driver_state.pwm_cs_bits];
+            const double freq = 1000000.0 / (double) msg->driver_state.pwm_period;
+
+            printf("    - clock: %f\n", clock);
+            printf("    - freq: %f\n", freq);
 
             (void) strncpy(
                     log_msg,

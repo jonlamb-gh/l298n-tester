@@ -78,8 +78,14 @@ static void send_msg(void)
     }
 }
 
-static void set_pwm(void)
+static void test_routine(void)
 {
+    led_on();
+
+    init_msg(tx_msg.error_cnt);
+
+    input_update(&tx_msg.input_state);
+
     // pt0 is logarithmic, mapped to pwm_period
     // pt1 is linear, mapped to pwm_duty
     const uint16_t pwm_duty = (uint16_t) map_i32(
@@ -89,34 +95,21 @@ static void set_pwm(void)
             0,
             PWM_DUTY_MAX);
 
+    // TODO - solder things up differently
     const uint32_t pwm_period = (uint32_t) map_i32(
             tx_msg.input_state.pt0,
             0,
             ADC_VALUE_MAX,
-            0,
-            PWM_PERIOD_MAX);
-
-    driver_set_pwm(pwm_duty, pwm_period);
-}
-
-static void test_routine(void)
-{
-    led_on();
-
-    init_msg(tx_msg.error_cnt);
-
-    input_update(&tx_msg.input_state);
+            1, // 1000 kHz
+            100UL); // 10 kHz
 
     tx_msg.start_time = time_get_ms();
 
-    // TODO - toggle mechanism?
     driver_set_direction(
             tx_msg.input_state.bt0,
             tx_msg.input_state.bt1);
 
-    set_pwm();
-
-    driver_enable(1);
+    driver_enable(pwm_duty, pwm_period);
 
     do
     {
@@ -134,7 +127,7 @@ static void test_routine(void)
 
     led_on();
 
-    driver_enable(0);
+    driver_disable();
 
     driver_set_direction(0, 0);
 
@@ -187,6 +180,7 @@ int main(void)
         {
             led_toggle();
             tx_msg.start_time = time_get_ms();
+            tx_msg.end_time = tx_msg.start_time;
             driver_get_state(&tx_msg.driver_state);
             send_msg();
         }

@@ -17,6 +17,9 @@ typedef struct
     uint16_t cs;
     uint16_t pwm_duty;
     uint32_t pwm_period;
+    uint8_t pwm_cs_bits;
+    uint16_t pwm_ocr;
+    uint16_t pwm_icr;
 } driver_s;
 
 void driver_init(void);
@@ -28,11 +31,10 @@ void driver_set_direction(
         const uint8_t in1,
         const uint8_t in2);
 
-void driver_set_pwm(
+void driver_enable(
         const uint16_t duty,
         const uint32_t period);
 
-void driver_enable(
-        const uint8_t en);
+void driver_disable(void);
 
 #endif  /* DRIVER_H */

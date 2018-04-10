@@ -17,12 +17,12 @@
 
 #define TIMER3_RESOLUTION (65536UL)
 
-// we're using pin C4, which maps to channel C
+// pin C4 maps to channel C
 #define COM3 (COM3C1)
 #define OCR3 (OCR3C)
 
-static uint8_t clock_select_bits;
-static uint16_t pwm_period;
+static uint8_t g_cs_bits;
+static uint16_t g_pwm_period;
 
 static void hw_init(void)
 {
@@ -32,18 +32,8 @@ static void hw_init(void)
 
 static void resume(void)
 {
-    TCCR3B = BIT(WGM33) | clock_select_bits;
+    TCCR3B = BIT(WGM33) | g_cs_bits;
 }
-
-/*
-static void start(void)
-{
-    TCCR3B = 0;
-    TCNT3 = 0;
-
-    resume();
-}
-*/
 
 static void stop(void)
 {
@@ -57,36 +47,36 @@ static void set_period(
 
 	if(cycles < TIMER3_RESOLUTION)
     {
-	    clock_select_bits = BIT(CS30);
-		pwm_period = cycles;
+	    g_cs_bits = BIT(CS30);
+		g_pwm_period = cycles;
 	}
     else if(cycles < TIMER3_RESOLUTION * 8)
     {
-		clock_select_bits = BIT(CS31);
-		pwm_period = cycles / 8;
+		g_cs_bits = BIT(CS31);
+		g_pwm_period = cycles / 8;
 	}
     else if(cycles < TIMER3_RESOLUTION * 64)
     {
-		clock_select_bits = BIT(CS31) | BIT(CS30);
-		pwm_period = cycles / 64;
+		g_cs_bits = BIT(CS31) | BIT(CS30);
+		g_pwm_period = cycles / 64;
 	}
     else if(cycles < TIMER3_RESOLUTION * 256)
     {
-		clock_select_bits = BIT(CS32);
-		pwm_period = cycles / 256;
+		g_cs_bits = BIT(CS32);
+		g_pwm_period = cycles / 256;
 	}
     else if(cycles < TIMER3_RESOLUTION * 1024)
     {
-		clock_select_bits = BIT(CS32) | BIT(CS30);
-		pwm_period = cycles / 1024;
+		g_cs_bits = BIT(CS32) | BIT(CS30);
+		g_pwm_period = cycles / 1024;
 	}
     else
     {
-		clock_select_bits = BIT(CS32) | BIT(CS30);
-		pwm_period = TIMER3_RESOLUTION - 1;
+		g_cs_bits = BIT(CS32) | BIT(CS30);
+		g_pwm_period = TIMER3_RESOLUTION - 1;
 	}
 
-	ICR3 = pwm_period;
+	ICR3 = g_pwm_period;
 }
 
 void pwm_init(void)
@@ -95,34 +85,28 @@ void pwm_init(void)
 
     stop();
 
-    // clear control register A
     TCCR3A = 0;
 
-    clock_select_bits = 0;
-    pwm_period = 0;
+    g_cs_bits = 0;
+    g_pwm_period = 0;
 
     set_period(PWM_DEFAULT_PERIOD);
 }
 
-void pwm_set_period(
+void pwm_enable(
+        const uint16_t duty,
         const uint32_t period)
 {
+    stop();
+
     if(period > 0)
     {
         set_period(period);
     }
 
-    // TODO - figure out the use case
-    //resume();
-}
-
-void pwm_enable(
-        const uint16_t duty)
-{
     TCCR3A |= BIT(COM3);
 
-    // set duty
-    uint16_t duty_cycle = pwm_period;
+    uint16_t duty_cycle = g_pwm_period;
 
     duty_cycle *= duty;
     duty_cycle >>= 10;
@@ -137,4 +121,14 @@ void pwm_disable(void)
     TCCR3A &= ~BIT(COM3);
     stop();
     bit_clear(PWM_PORT, BIT(PWM_BIT));
+}
+
+void pwm_get_internal(
+        uint8_t * const cs_bits,
+        uint16_t * const ocr,
+        uint16_t * const icr)
+{
+    *cs_bits = g_cs_bits;
+    *ocr = OCR3;
+    *icr = ICR3;
 }
