@@ -117,11 +117,11 @@ static void test_routine(void)
 
         driver_get_state(&tx_msg.driver_state);
 
-        time_delay_ms(20);
-
         send_msg();
 
         led_toggle();
+
+        //driver_toggle_direction();
     }
     while(tx_msg.input_state.bt2 != 0);
 

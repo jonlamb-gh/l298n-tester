@@ -85,6 +85,13 @@ void driver_set_direction(
     }
 }
 
+void driver_toggle_direction(void)
+{
+    driver_set_direction(
+            !(DRIVER_IO_PORT & BIT(DRIVER_IO_BIT_IN1)),
+            !(DRIVER_IO_PORT & BIT(DRIVER_IO_BIT_IN2)));
+}
+
 void driver_enable(
         const uint16_t duty,
         const uint32_t period)

@@ -31,6 +31,8 @@ void driver_set_direction(
         const uint8_t in1,
         const uint8_t in2);
 
+void driver_toggle_direction(void);
+
 void driver_enable(
         const uint16_t duty,
         const uint32_t period);
