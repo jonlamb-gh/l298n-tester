@@ -20,7 +20,7 @@
 // pot0:1
 #define INPUT_GROUP_POT (0x30)
 
-typedef struct
+typedef struct __attribute__((packed))
 {
     uint8_t bt0;
     uint8_t bt1;

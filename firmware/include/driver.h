@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-typedef struct
+typedef struct __attribute__((packed))
 {
     uint8_t in1;
     uint8_t in2;

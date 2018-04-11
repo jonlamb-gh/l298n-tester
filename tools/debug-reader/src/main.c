@@ -16,13 +16,26 @@
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #endif
 
+static void assert_message_size(void) __attribute__((unused));
+#define BUILD_ASSERT(cond) do { (void) sizeof(char [1 - 2*!(cond)]); } while(0)
+static void assert_message_size(void)
+{
+    BUILD_ASSERT(PROTO_MSG_SIZE == sizeof(proto_msg_s));
+}
+#undef BUILD_ASSERT
+
 int main(int argc, char **argv)
 {
     int ret;
     int bytes_read;
-    unsigned long local_msg_cnt;
+    unsigned long local_msg_cnt = 0;
     char buffer[PROTO_MSG_SIZE + 1];
     char log_msg[PROTO_MSG_LOG_MSG_SIZE + 1];
+
+    printf("PROTO_MSG_SIZE = %d\n", (int) PROTO_MSG_SIZE);
+    printf("sizeof(proto_msg_s) = %d\n", (int) sizeof(proto_msg_s));
+    printf("sizeof(input_s) = %d\n", (int) sizeof(input_s));
+    printf("sizeof(driver_s) = %d\n", (int) sizeof(driver_s));
 
     ret = rawhid_open(
             1,
@@ -119,6 +132,7 @@ int main(int argc, char **argv)
         }
         else
         {
+            printf("invalid bytes read: %d\n", bytes_read);
             exit(1);
         }
     }
