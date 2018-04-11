@@ -87,11 +87,16 @@ int main(int argc, char **argv)
             printf("  pt0: %lu\n", (unsigned long) msg->input_state.pt0);
             printf("  pt1: %lu\n", (unsigned long) msg->input_state.pt1);
 
+            // I = U / R
+            const double current_a =
+                    ((double) msg->driver_state.cs / 1024.0)
+                    * (5.0 / 0.5);
+
             printf("driver_state\n");
             printf("  in1: %lu\n", (unsigned long) msg->driver_state.in1);
             printf("  in2: %lu\n", (unsigned long) msg->driver_state.in2);
             printf("  en: %lu\n", (unsigned long) msg->driver_state.en);
-            printf("  cs: %lu\n", (unsigned long) msg->driver_state.cs);
+            printf("  cs: %lu - %.3f A\n", (unsigned long) msg->driver_state.cs, current_a);
             printf("  delay_interval: %lu\n", (unsigned long) msg->driver_state.delay_interval);
             printf(
                     "  pwm_duty: %lu = %% %.2f\n",

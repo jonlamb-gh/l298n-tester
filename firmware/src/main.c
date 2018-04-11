@@ -83,7 +83,7 @@ static void run_test_procedure(void)
     uint16_t pwm_duty;
 
     // fixed PWM period
-    const uint32_t pwm_period = 40;
+    const uint32_t pwm_period = 5;
 
     led_on();
 
