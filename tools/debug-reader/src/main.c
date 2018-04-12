@@ -78,6 +78,7 @@ int main(int argc, char **argv)
             printf("end_time: %lu\n", (unsigned long) msg->end_time);
             printf("error_cnt: %lu\n", (unsigned long) msg->error_cnt);
             printf("cnt: %lu\n", (unsigned long) msg->cnt);
+            printf("running_proc: 0x%02X\n", (unsigned int) msg->running_proc);
 
             printf("input_state\n");
             printf("  bt0: %lu\n", (unsigned long) msg->input_state.bt0);

@@ -83,4 +83,4 @@
 #define led_off() bit_clear(LED_PORT, BIT(LED_BIT))
 #define led_toggle() bit_flip(LED_PORT, BIT(LED_BIT))
 
-#endif  /* BOARD_H */
+#endif /* BOARD_H */

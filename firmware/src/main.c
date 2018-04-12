@@ -4,7 +4,6 @@
  *
  */
 
-#include <string.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
@@ -18,6 +17,9 @@
 #include "driver.h"
 #include "protocol.h"
 #include "transport.h"
+#include "msg.h"
+#include "procedure_0.h"
+#include "procedure_1.h"
 
 #ifndef F_CPU
 #error "F_CPU not defined"
@@ -30,16 +32,6 @@ AVR_MCU(F_CPU, "at90usb1286");
 #endif
 
 static proto_msg_s tx_msg;
-
-static int32_t map_i32(
-        const int32_t x,
-        const int32_t in_min,
-        const int32_t in_max,
-        const int32_t out_min,
-        const int32_t out_max)
-{
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
 
 static void wait_for_transport(void)
 {
@@ -54,103 +46,6 @@ static void wait_for_transport(void)
     led_on();
     time_delay_ms(1000);
     led_off();
-}
-
-static void init_msg(
-        const uint16_t error_cnt)
-{
-    (void) memset(&tx_msg, 0, sizeof(tx_msg));
-    tx_msg.preamble = PROTO_MSG_PREAMBLE;
-    tx_msg.error_cnt = error_cnt;
-}
-
-static void send_msg(void)
-{
-    tx_msg.cnt += 1;
-
-    tx_msg.checksum = protocol_crc16(&tx_msg);
-
-    const uint8_t err = transport_send(&tx_msg);
-
-    if(err != 0)
-    {
-        tx_msg.error_cnt += 1;
-    }
-}
-
-static void run_test_procedure(void)
-{
-    uint16_t pwm_duty;
-
-    // fixed PWM period
-    const uint32_t pwm_period = 5;
-
-    led_on();
-
-    init_msg(tx_msg.error_cnt);
-
-    // read inputs while pressed
-    do
-    {
-        input_update(INPUT_ALL, &tx_msg.input_state);
-
-        pwm_duty = (uint16_t) map_i32(
-                tx_msg.input_state.pt1,
-                0,
-                ADC_VALUE_MAX,
-                0,
-                PWM_DUTY_MAX);
-
-        tx_msg.driver_state.delay_interval = tx_msg.input_state.pt0;
-
-        driver_get_state(&tx_msg.driver_state);
-        tx_msg.driver_state.pwm_duty = pwm_duty;
-
-        send_msg();
-
-        time_delay_ms(20);
-    }
-    while(tx_msg.input_state.bt2 != 0);
-
-    time_delay_ms(500);
-
-    tx_msg.start_time = time_get_ms();
-
-    driver_set_direction(0, 1);
-
-    driver_enable(pwm_duty, pwm_period);
-
-    do
-    {
-        input_update(
-                INPUT_GROUP_BUTTON,
-                &tx_msg.input_state);
-
-        driver_get_state(&tx_msg.driver_state);
-
-        send_msg();
-
-        led_toggle();
-
-        driver_toggle_direction();
-
-        time_delay_ms(tx_msg.driver_state.delay_interval);
-    }
-    while(tx_msg.input_state.bt1 == 0);
-
-    driver_disable();
-
-    driver_set_direction(0, 0);
-
-    tx_msg.end_time = time_get_ms();
-
-    driver_get_state(&tx_msg.driver_state);
-
-    send_msg();
-
-    led_off();
-
-    time_delay_ms(500);
 }
 
 /*
@@ -238,16 +133,22 @@ int main(void)
 
     wait_for_transport();
 
-    init_msg(0);
+    msg_init(0, &tx_msg);
 
     while(1)
     {
         input_update(INPUT_ALL, &tx_msg.input_state);
 
-        if(tx_msg.input_state.bt2 != 0)
+        if(tx_msg.input_state.bt0 != 0)
         {
-            run_test_procedure();
+            procedure_0_run(&tx_msg);
         }
+        else if(tx_msg.input_state.bt1 != 0)
+        {
+            procedure_1_run(&tx_msg);
+        }
+
+        tx_msg.running_proc = 0xFF;
 
         // periodically send out a message
         if(time_get_and_clear_event() != 0)
@@ -256,7 +157,7 @@ int main(void)
             tx_msg.start_time = time_get_ms();
             tx_msg.end_time = tx_msg.start_time;
             driver_get_state(&tx_msg.driver_state);
-            send_msg();
+            msg_send(&tx_msg);
         }
     }
 

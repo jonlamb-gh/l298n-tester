@@ -27,4 +27,4 @@ void pwm_get_internal(
         uint16_t * const ocr,
         uint16_t * const icr);
 
-#endif  /* PWM_H */
+#endif /* PWM_H */

@@ -36,4 +36,4 @@ void input_update(
         const uint8_t flags,
         input_s * const input);
 
-#endif  /* INPUT_H */
+#endif /* INPUT_H */

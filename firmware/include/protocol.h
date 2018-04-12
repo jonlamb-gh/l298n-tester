@@ -15,7 +15,7 @@
 #define PROTO_MSG_SIZE (64)
 #define PROTO_MSG_PREAMBLE (0xADC4)
 
-#define PROTO_MSG_LOG_MSG_SIZE (20)
+#define PROTO_MSG_LOG_MSG_SIZE (19)
 
 typedef struct __attribute__((packed))
 {
@@ -24,6 +24,7 @@ typedef struct __attribute__((packed))
     uint32_t end_time;
     uint16_t error_cnt;
     uint16_t cnt;
+    uint8_t running_proc;
     input_s input_state;
     driver_s driver_state;
     uint8_t log_msg_size;
@@ -34,4 +35,4 @@ typedef struct __attribute__((packed))
 uint16_t protocol_crc16(
         const proto_msg_s * const msg);
 
-#endif  /* PROTOCOL_H */
+#endif /* PROTOCOL_H */

@@ -20,4 +20,4 @@ uint8_t transport_ready(void);
 uint8_t transport_send(
         const proto_msg_s * const msg);
 
-#endif  /* TRANSPORT_H */
+#endif /* TRANSPORT_H */

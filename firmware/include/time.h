@@ -22,4 +22,4 @@ uint32_t time_get_ms(void);
 
 uint8_t time_get_and_clear_event(void);
 
-#endif  /* TIME_H */
+#endif /* TIME_H */

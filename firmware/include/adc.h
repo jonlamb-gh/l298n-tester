@@ -25,4 +25,4 @@ void adc_init_pins(
 uint16_t adc_read(
         const uint8_t mux);
 
-#endif  /* ADC_H */
+#endif /* ADC_H */

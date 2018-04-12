@@ -40,4 +40,4 @@ void driver_enable(
 
 void driver_disable(void);
 
-#endif  /* DRIVER_H */
+#endif /* DRIVER_H */
