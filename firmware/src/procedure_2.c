@@ -1,5 +1,5 @@
 /**
- * @file procedure_1.c
+ * @file procedure_2.c
  * @brief TODO.
  *
  */
@@ -19,18 +19,29 @@
 #include "msg.h"
 #include "procedure_1.h"
 
-void procedure_1_run(
+static void pwm_interrupt_cb(
+        const uint8_t top)
+{
+    if(top == 0)
+    {
+        led_on();
+    }
+    else
+    {
+        led_off();
+    }
+}
+
+void procedure_2_run(
         proto_msg_s * const msg)
 {
-    uint8_t toggle_dir;
     uint16_t pwm_duty;
     uint32_t pwm_period;
 
-    led_on();
+    led_off();
 
-    toggle_dir = 0;
     msg_init(msg->error_cnt, msg);
-    msg->running_proc = 1;
+    msg->running_proc = 2;
     msg->driver_state.delay_interval = 0;
 
     msg->start_time = time_get_ms();
@@ -52,8 +63,8 @@ void procedure_1_run(
                 msg->input_state.pt0,
                 0,
                 ADC_VALUE_MAX,
-                1, // 1000 kHz
-                100UL); // 10 kHz
+                1,
+                1000UL);
 
         driver_get_state(&msg->driver_state);
         msg->driver_state.pwm_duty = pwm_duty;
@@ -61,50 +72,44 @@ void procedure_1_run(
 
         msg_send(msg);
 
-        if(msg->input_state.bt0 != 0)
-        {
-            toggle_dir = !toggle_dir;
-        }
-
-        if(msg->input_state.bt2 != 0)
+        if(msg->input_state.bt1 != 0)
         {
             driver_set_direction(1, 0);
             msg->start_time = time_get_ms();
 
-            if(toggle_dir != 0)
-            {
-                driver_toggle_direction();
-            }
-
             driver_enable(pwm_duty, pwm_period);
+            pwm_set_interrupt_callback(&pwm_interrupt_cb);
 
             do
             {
-                led_toggle();
-
                 driver_get_state(&msg->driver_state);
 
                 msg_send(msg);
 
-                input_update(INPUT_GROUP_BUTTON, &msg->input_state);
-            }
-            while((msg->input_state.bt2 != 0) && (msg->input_state.bt1 !=0));
+                input_update(INPUT_ALL, &msg->input_state);
 
-            led_on();
+                time_delay_ms(20);
+            }
+            while((msg->input_state.bt0 != 0) && (msg->input_state.bt2 !=0));
+
+            led_off();
             driver_disable();
             driver_set_direction(0, 0);
 
             msg->end_time = time_get_ms();
 
             msg_send(msg);
+
+            time_delay_ms(100);
         }
 
         time_delay_ms(20);
     }
-    while(msg->input_state.bt1 != 0);
+    while(msg->input_state.bt2 != 0);
 
     driver_disable();
     driver_set_direction(0, 0);
+    pwm_set_interrupt_callback(NULL);
 
     msg->end_time = time_get_ms();
     driver_get_state(&msg->driver_state);

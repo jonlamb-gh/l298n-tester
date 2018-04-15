@@ -23,6 +23,25 @@
 
 static uint8_t g_cs_bits;
 static uint16_t g_pwm_period;
+static pwm_interrupt_callback g_interrupt_cb;
+
+ISR(TIMER3_CAPT_vect)
+{
+    if(g_interrupt_cb != NULL)
+    {
+        // top
+        g_interrupt_cb(1);
+    }
+}
+
+ISR(TIMER3_OVF_vect)
+{
+    if(g_interrupt_cb != NULL)
+    {
+        // bottom
+        g_interrupt_cb(0);
+    }
+}
 
 static void hw_init(void)
 {
@@ -86,9 +105,11 @@ void pwm_init(void)
     stop();
 
     TCCR3A = 0;
+    TIMSK3 &= ~(BIT(TOIE3) | BIT(ICIE3));
 
     g_cs_bits = 0;
     g_pwm_period = 0;
+    g_interrupt_cb = NULL;
 
     set_period(PWM_DEFAULT_PERIOD);
 }
@@ -120,7 +141,31 @@ void pwm_disable(void)
 {
     TCCR3A &= ~BIT(COM3);
     stop();
+    TIMSK3 &= ~(BIT(TOIE3) | BIT(ICIE3));
     bit_clear(PWM_PORT, BIT(PWM_BIT));
+}
+
+void pwm_set_interrupt_callback(
+        const pwm_interrupt_callback cb)
+{
+    if(cb == NULL)
+    {
+        TIMSK3 &= ~(BIT(TOIE3) | BIT(ICIE3));
+
+        disable_interrupt();
+        g_interrupt_cb = NULL;
+        enable_interrupt();
+    }
+    else
+    {
+        TIMSK3 &= ~(BIT(TOIE3) | BIT(ICIE3));
+
+        disable_interrupt();
+        g_interrupt_cb = cb;
+        enable_interrupt();
+
+        TIMSK3 |= (BIT(TOIE3) | BIT(ICIE3));
+    }
 }
 
 void pwm_get_internal(

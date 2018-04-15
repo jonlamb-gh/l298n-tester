@@ -38,6 +38,7 @@ SRC = src/usb_rawhid.c \
 	  src/msg.c \
 	  src/procedure_0.c \
 	  src/procedure_1.c \
+	  src/procedure_2.c \
 	  src/main.c
 
 # Teensy++ 2.0

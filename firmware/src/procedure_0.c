@@ -8,6 +8,7 @@
 #include <avr/io.h>
 
 #include "board_def.h"
+#include "math.h"
 #include "time.h"
 #include "adc.h"
 #include "pwm.h"
@@ -17,16 +18,6 @@
 #include "transport.h"
 #include "msg.h"
 #include "procedure_0.h"
-
-static int32_t map_i32(
-        const int32_t x,
-        const int32_t in_min,
-        const int32_t in_max,
-        const int32_t out_min,
-        const int32_t out_max)
-{
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
 
 void procedure_0_run(
         proto_msg_s * const msg)

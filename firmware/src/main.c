@@ -20,6 +20,7 @@
 #include "msg.h"
 #include "procedure_0.h"
 #include "procedure_1.h"
+#include "procedure_2.h"
 
 #ifndef F_CPU
 #error "F_CPU not defined"
@@ -48,73 +49,11 @@ static void wait_for_transport(void)
     led_off();
 }
 
-/*
-static void test_routine(void)
-{
-    led_on();
-
-    init_msg(tx_msg.error_cnt);
-
-    // TODO - flags for groups?
-    input_update(INPUT_ALL, &tx_msg.input_state);
-
-    // pt0 is logarithmic, mapped to pwm_period
-    // pt1 is linear, mapped to pwm_duty
-    const uint16_t pwm_duty = (uint16_t) map_i32(
-            tx_msg.input_state.pt1,
-            0,
-            ADC_VALUE_MAX,
-            0,
-            PWM_DUTY_MAX);
-
-    // TODO - solder things up differently
-    const uint32_t pwm_period = (uint32_t) map_i32(
-            tx_msg.input_state.pt0,
-            0,
-            ADC_VALUE_MAX,
-            1, // 1000 kHz
-            100UL); // 10 kHz
-
-    tx_msg.start_time = time_get_ms();
-
-    driver_set_direction(
-            tx_msg.input_state.bt0,
-            tx_msg.input_state.bt1);
-
-    driver_enable(pwm_duty, pwm_period);
-
-    do
-    {
-        input_update(INPUT_ALL, &tx_msg.input_state);
-
-        driver_get_state(&tx_msg.driver_state);
-
-        send_msg();
-
-        led_toggle();
-    }
-    while(tx_msg.input_state.bt2 != 0);
-
-    led_on();
-
-    driver_disable();
-
-    driver_set_direction(0, 0);
-
-    tx_msg.end_time = time_get_ms();
-
-    driver_get_state(&tx_msg.driver_state);
-
-    send_msg();
-
-    led_off();
-}
-*/
-
 int main(void)
 {
     wdt_disable();
     disable_interrupt();
+    wdt_enable(WDTO_8S);
 
     cpu_prescale(CPU_16MHZ);
 
@@ -137,6 +76,8 @@ int main(void)
 
     while(1)
     {
+        wdt_reset();
+
         input_update(INPUT_ALL, &tx_msg.input_state);
 
         if(tx_msg.input_state.bt0 != 0)
@@ -146,6 +87,10 @@ int main(void)
         else if(tx_msg.input_state.bt1 != 0)
         {
             procedure_1_run(&tx_msg);
+        }
+        else if(tx_msg.input_state.bt2 != 0)
+        {
+            procedure_2_run(&tx_msg);
         }
 
         tx_msg.running_proc = 0xFF;

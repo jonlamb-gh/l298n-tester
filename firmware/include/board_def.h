@@ -9,6 +9,10 @@
 
 #include <stdint.h>
 
+#ifndef NULL
+#define NULL (0)
+#endif
+
 #define OFF (0)
 #define ON  (1)
 
